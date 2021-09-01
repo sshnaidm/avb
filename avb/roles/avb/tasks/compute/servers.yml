@@ -55,7 +55,7 @@
 
 - openstack.cloud.server:  # undercloud
     state: "{{ state }}"
-    name: "undercloud9-{{ avb_id }}"
+    name: "undercloud-{{ avb_id }}"
     cloud: "{{ cloud }}"
     flavor: "{{ undercloud_flavor }}"
     key_name: "{{ key_name }}"
