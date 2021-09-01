@@ -70,7 +70,7 @@ images:
   - name: upstream-cloudinit-centos-8
     min_disk: 8
     is_public: false
-    filename: "{{ images_path }}/upstream-centos-8-stream-newest.qcow2"
+    filename: "{{ images_path }}/upstream-centos-8-stream.qcow2"
   - name: upstream-cloudinit-centos-9
     min_disk: 8
     is_public: false
@@ -82,4 +82,4 @@ images:
 # keypairs section
 keypairs: []
   # - key_name: example-key
-  #   public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDDhi/BqsZibuAPiUjJe7b3Dqe5nyI7BckOwfGwJYg436+bFQMoR/7RKmtPe+ISVQ04lwIriIPwKGaSHj5mbEe4LsCLZ5jAUHxvWfgHitqS5ln295zU7vp1z28o7e6LQNplgExyqQlxUPdOU48tmlz93F6szSYkNYvZnhzMn9syrajC74qPuKsmHTeYFLEcxesb7/u+BtxCk8WdjYTb//sk038NEtIsNhrGtAOV3WcDpXnA5mNMpUfeoQ4yiN9LqtreXr7Zeo587LV3T2QL+huAE0J7EuCzHAKk6TIzJqjLidg0SYwZZwfbxgviU66QLkeyzh9oiovwskelvOQCBFq3
+  #   public_key: ssh-rsa AAAA...
