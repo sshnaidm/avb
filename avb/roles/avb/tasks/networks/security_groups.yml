@@ -1,0 +1,20 @@
+---
+- when: base_setup|bool
+  block:
+    - openstack.cloud.security_group:
+        state: present
+        cloud: "{{ cloud }}"
+        name: default
+        description: Default security group
+    - openstack.cloud.security_group_rule:
+        state: present
+        cloud: "{{ cloud }}"
+        ethertype: '{{ item.ethertype | default(omit) }}'
+        remote_ip_prefix: '{{ item.remote_ip_prefix | default(omit) }}'
+        direction: '{{ item.direction | default(omit) }}'
+        security_group: default
+        port_range_max: '{{ item.port_range_max | default(omit) }}'
+        port_range_min: '{{ item.port_range_min | default(omit) }}'
+        protocol: '{{ item.protocol | default(omit) }}'
+        remote_group: '{{ item.remote_group | default(omit) }}'
+      loop: '{{ default_rules }}'

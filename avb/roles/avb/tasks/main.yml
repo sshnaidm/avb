@@ -1,0 +1,5 @@
+- include_tasks: main_up.yml
+  when: not teardown|default(false)|bool
+
+- include_tasks: main_down.yml
+  when: teardown|default(false)|bool

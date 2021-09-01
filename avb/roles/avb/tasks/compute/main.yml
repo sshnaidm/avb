@@ -1,0 +1,6 @@
+---
+- include_tasks: compute/main_up.yml
+  when: not teardown|default(false)|bool
+
+- include_tasks: compute/main_down.yml
+  when: teardown|default(false)|bool

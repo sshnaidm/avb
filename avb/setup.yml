@@ -1,0 +1,17 @@
+---
+base_setup: false  # set true if you provision the tenant
+avb_id: random-string  # your unique marker of virtual environment
+cloud: your-cloud-name-in-clouds-yaml  # name of cloud in clouds.yaml
+undercloud_flavor: m1.xlarge
+set_up_undercloud: true
+bmc_flavor: m1.medium
+bm_flavor: m1.large
+external_net: external-net-name
+# if you provision tenant and create images,
+# provide the path to local folder with image files
+images_path: /path/to/image/files
+key_name: my-ssh-key
+keypairs:
+  - key_name: my-ssh-key
+    public_key: ssh-rsa AAAA.....  # your public SSH key, usually in ~/.ssh/id_rsa.pub
+bms_count: 4  # how many virtual baremetal hosts to create

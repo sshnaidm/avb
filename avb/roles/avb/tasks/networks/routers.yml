@@ -1,0 +1,19 @@
+---
+- openstack.cloud.router:
+    state: "{{ state }}"
+    cloud: "{{ cloud }}"
+    name: "{{ router_name }}"
+    interfaces:
+      - "{{ private_subnet_name }}"
+    network: "{{ external_net }}"
+  when:
+    - base_setup|bool
+    - use_private_net|bool
+
+- openstack.cloud.router:
+    state: "{{ state }}"
+    cloud: "{{ cloud }}"
+    name: "baremetal_{{ avb_id }}-private_network-router"
+    interfaces:
+      - "private-{{ avb_id }}"
+    network: "{{ external_net }}"

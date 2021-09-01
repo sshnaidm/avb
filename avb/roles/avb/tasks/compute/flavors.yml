@@ -1,0 +1,19 @@
+---
+- when:
+    - base_setup|bool
+    - admin_perms|bool
+  block:
+    - openstack.cloud.compute_flavor:
+        state: "{{ state }}"
+        cloud: "{{ cloud }}"
+        name: "{{ bm_flavor }}"
+        disk: 80
+        ram: 8192
+        vcpus: 4
+    - openstack.cloud.compute_flavor:
+        state: "{{ state }}"
+        cloud: "{{ cloud }}"
+        name: "{{ bmc_flavor }}"
+        disk: 40
+        ram: 4096
+        vcpus: 2

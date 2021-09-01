@@ -1,0 +1,85 @@
+---
+# networks section
+networks:
+- network_name: "ctlplane-{{ avb_id }}"
+- network_name: "public-{{ avb_id }}"
+- network_name: "private-{{ avb_id }}"
+- network_name: "overcloud_storage-{{ avb_id }}"
+- network_name: "overcloud_storage_mgmt-{{ avb_id }}"
+- network_name: "overcloud_tenant-{{ avb_id }}"
+- network_name: "overcloud_internal-{{ avb_id }}"
+# subnets section
+subnets:
+  - name: "overcloud_storage_mgmt-{{ avb_id }}"
+    network_name: "overcloud_storage_mgmt-{{ avb_id }}"
+    cidr: 172.19.0.0/24
+  - name: "overcloud_tenant-{{ avb_id }}"
+    network_name: "overcloud_tenant-{{ avb_id }}"
+    cidr: 172.16.0.0/24
+  - name: "overcloud_storage-{{ avb_id }}"
+    network_name: "overcloud_storage-{{ avb_id }}"
+    cidr: 172.18.0.0/24
+  - name: "overcloud_internal-{{ avb_id }}"
+    network_name: "overcloud_internal-{{ avb_id }}"
+    cidr: 172.17.0.0/24
+  - name: "public-{{ avb_id }}"
+    network_name: "public-{{ avb_id }}"
+    cidr: 10.0.0.0/24
+  - name: "ctlplane-{{ avb_id }}"
+    network_name: "ctlplane-{{ avb_id }}"
+    cidr: 192.168.24.0/24
+  - name: "private-{{ avb_id }}"
+    network_name: "private-{{ avb_id }}"
+    cidr: 10.0.1.0/24
+default_rules:
+  # initial rules
+  - ethertype: IPv6
+    direction: egress
+  - direction: egress
+  - remote_group: default
+  - ethertype: IPv6
+    remote_group: default
+  # custom rules
+  - port_range_max: 22
+    port_range_min: 22
+    protocol: tcp
+    remote_ip_prefix: 0.0.0.0/0
+  - port_range_max: 5001
+    port_range_min: 5001
+    protocol: tcp
+    remote_ip_prefix: 0.0.0.0/0
+  - port_range_max: 8766
+    port_range_min: 8766
+    protocol: tcp
+    remote_ip_prefix: 0.0.0.0/0
+  - port_range_max: 19885
+    port_range_min: 19885
+    protocol: tcp
+    remote_ip_prefix: 0.0.0.0/0
+  - protocol: icmp
+    remote_ip_prefix: 0.0.0.0/0
+
+images:
+  - name: bmc-template
+    min_disk: 20
+    is_public: false
+    filename: "{{ images_path }}/bmc-template.qcow2"
+  - name: ipxe-boot
+    is_public: false
+    filename: "{{ images_path }}/ipxe-boot.qcow2"
+  - name: upstream-cloudinit-centos-8
+    min_disk: 8
+    is_public: false
+    filename: "{{ images_path }}/upstream-centos-8-stream-newest.qcow2"
+  - name: upstream-cloudinit-centos-9
+    min_disk: 8
+    is_public: false
+    filename: "{{ images_path }}/upstream-cloudinit-centos-9.qcow2"
+  - name: upstream-cloudinit-rhel-8.4
+    min_disk: 8
+    is_public: false
+    filename: "{{ images_path }}/upstream-rhel-8.4.qcow2"
+# keypairs section
+keypairs: []
+  # - key_name: example-key
+  #   public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDDhi/BqsZibuAPiUjJe7b3Dqe5nyI7BckOwfGwJYg436+bFQMoR/7RKmtPe+ISVQ04lwIriIPwKGaSHj5mbEe4LsCLZ5jAUHxvWfgHitqS5ln295zU7vp1z28o7e6LQNplgExyqQlxUPdOU48tmlz93F6szSYkNYvZnhzMn9syrajC74qPuKsmHTeYFLEcxesb7/u+BtxCk8WdjYTb//sk038NEtIsNhrGtAOV3WcDpXnA5mNMpUfeoQ4yiN9LqtreXr7Zeo587LV3T2QL+huAE0J7EuCzHAKk6TIzJqjLidg0SYwZZwfbxgviU66QLkeyzh9oiovwskelvOQCBFq3

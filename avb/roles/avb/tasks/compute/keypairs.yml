@@ -1,0 +1,8 @@
+---
+- openstack.cloud.keypair:
+    cloud: "{{ cloud }}"
+    public_key: '{{ item.public_key | default(omit) }}'
+    name: '{{ item.key_name | default(omit) }}'
+    state: "{{ state }}"
+  loop: '{{ keypairs }}'
+  when: base_setup|bool

@@ -1,0 +1,67 @@
+---
+- name: Get cloud config
+  openstack.cloud.config:
+    clouds:
+      - "{{ cloud }}"
+  register: cloud_config
+
+- name: Set fact for cloud config
+  set_fact:
+    cloud_data:
+      clouds:
+        host_cloud: "{{ cloud_config.ansible_facts.openstack.clouds.0.auth }}"
+
+- name: Add bmc host with connection via undercloud
+  add_host:
+    name: bmc
+    ansible_connection: ssh
+    ansible_host: "{{ bmc.server.private_v4 }}"
+    ansible_port: 22
+    ansible_user: centos
+    ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p zuul@{{ undercloud.server.public_v4 }}"'
+  when: set_up_undercloud|bool
+
+- name: Add bmc host assuming undercloud is localhost
+  add_host:
+    name: bmc
+    ansible_connection: ssh
+    ansible_host: "{{ bmc.server.private_v4 }}"
+    ansible_port: 22
+    ansible_user: centos
+  when: not set_up_undercloud|bool
+
+- delegate_to: bmc
+  become: true
+  block:
+
+    - name: Create openstack config dir
+      file:
+        path: ~/.config/openstack
+        state: directory
+        recurse: true
+
+    - name: Create a cloud config
+      copy:
+        dest: ~/.config/openstack/clouds.yaml
+        content: >-
+          {{ cloud_data|to_yaml }}
+
+    - name: Create /usr/local/bin/openstackbmc
+      copy:
+        src: openstackbmc.py
+        dest: /usr/local/bin/openstackbmc
+        mode: 0777
+
+    - name: Create install BMC script
+      template:
+        src: install_openstackbmc.sh.j2
+        dest: /tmp/install_openstackbmc.sh
+        mode: 0777
+
+    - name: Set up BMC
+      command: bash /tmp/install_openstackbmc.sh
+
+    - name: Remove cloud config
+      file:
+        path: ~/.config/openstack/clouds.yaml
+        state: absent

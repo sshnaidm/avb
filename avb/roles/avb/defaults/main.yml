@@ -1,0 +1,26 @@
+---
+avb_id: custom
+cloud: yourcloud
+public_key: your_key
+external_net: external
+bms_count: 4
+private_network: private
+private_subnet_name: private_subnet
+router_name: private_router
+base_setup: false
+use_private_net: false
+admin_perms: false
+teardown: false
+images_path: ~/
+bm_flavor: m1.large
+bmc_flavor: m1.medium
+set_up_undercloud: true
+undercloud_flavor: "{{ bm_flavor }}"
+undercloud_image: upstream-cloudinit-centos-8
+bmc_image: bmc-template
+baremetal_image: ipxe-boot
+key_name: custom-ssh-key
+# BMC vars
+bmc_use_cache: true
+baremetal_prefix: "baremetal-{{ avb_id }}"
+bmc_prefix: "bmc-{{ avb_id }}"

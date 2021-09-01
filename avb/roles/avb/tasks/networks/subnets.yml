@@ -1,0 +1,18 @@
+---
+- openstack.cloud.subnet:
+    state: "{{ state }}"
+    name: "{{ private_subnet_name }}"
+    cloud: "{{ cloud }}"
+    network_name: "{{ private_network }}"
+    cidr: 192.168.100.0/24
+    gateway_ip: 192.168.100.1
+  when: base_setup|bool
+
+- openstack.cloud.subnet:
+    gateway_ip: '{{ gateway_ip | default(omit) }}'
+    cloud: "{{ cloud }}"
+    cidr: '{{ item.cidr | default(omit) }}'
+    network_name: '{{ item.network_name | default(omit) }}'
+    state: "{{ state }}"
+    name: '{{ item.name | default(omit) }}'
+  loop: '{{ subnets }}'

@@ -1,0 +1,22 @@
+---
+- when: base_setup|bool
+  block:
+  - openstack.cloud.network:
+      state: "{{ state }}"
+      cloud: "{{ cloud }}"
+      name: "{{ private_network }}"
+    when: use_private_net|bool
+
+  - openstack.cloud.network:
+      state: "{{ state }}"
+      cloud: "{{ cloud }}"
+      name: "{{ external_net }}"
+      external: true
+    when: admin_perms|bool
+
+- openstack.cloud.network:
+    state: "{{ state }}"
+    cloud: "{{ cloud }}"
+    name: "{{ item.network_name }}"
+    external: '{{ item.external | default(omit) }}'
+  loop: '{{ networks }}'

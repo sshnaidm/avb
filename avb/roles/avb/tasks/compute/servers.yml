@@ -1,0 +1,99 @@
+---
+- openstack.cloud.port:
+    cloud: "{{ cloud }}"
+    name: utility_{{ bmc_prefix}}
+    state: "{{ state }}"
+    network: "private-{{ avb_id }}"
+    port_security_enabled: false
+
+- openstack.cloud.server:  # bmc
+    state: "{{ state }}"
+    name: "{{ bmc_prefix }}"
+    cloud: "{{ cloud }}"
+    flavor: m1.medium
+    key_name: "{{ key_name }}"
+    image: bmc-template
+    nics:
+      - port-name: "utility_{{ bmc_prefix}}"
+    auto_ip: false
+  register: bmc
+
+- openstack.cloud.port:
+    cloud: "{{ cloud }}"
+    name: "{{ baremetal_prefix }}_{{ item }}"
+    state: "{{ state }}"
+    network: "ctlplane-{{ avb_id }}"
+  loop: "{{ range(0, bms_count) }}"
+
+- openstack.cloud.port:
+    cloud: "{{ cloud }}"
+    name: "{{ bmc_prefix }}_{{ item }}"
+    state: "{{ state }}"
+    network: "private-{{ avb_id }}"
+  loop: "{{ range(0, bms_count) }}"
+
+- openstack.cloud.server:  # baremetals
+    state: "{{ state }}"
+    name: "{{ baremetal_prefix }}_{{ item }}"
+    cloud: "{{ cloud }}"
+    flavor: "{{ bm_flavor }}"
+    key_name: "{{ key_name }}"
+    meta:
+      libvirt:pxe-first: '1'
+    image: ipxe-boot
+    config_drive: true
+    nics:
+      - port-name: "{{ baremetal_prefix }}_{{ item }}"
+      - net-name: "public-{{ avb_id }}"
+      - net-name: "overcloud_internal-{{ avb_id }}"
+      - net-name: "overcloud_storage-{{ avb_id }}"
+      - net-name: "overcloud_storage_mgmt-{{ avb_id }}"
+      - net-name: "overcloud_tenant-{{ avb_id }}"
+    auto_ip: false
+  loop: "{{ range(0, bms_count) }}"
+  register: baremetals
+
+- openstack.cloud.server:  # undercloud
+    state: "{{ state }}"
+    name: "undercloud9-{{ avb_id }}"
+    cloud: "{{ cloud }}"
+    flavor: "{{ undercloud_flavor }}"
+    key_name: "{{ key_name }}"
+    config_drive: true
+    image: "{{ undercloud_image }}"
+    nics:
+      - net-name: "{{ external_net }}"
+      # - net-name: private
+      - net-name: "ctlplane-{{ avb_id }}"
+      - net-name: "public-{{ avb_id }}"
+      - net-name: "private-{{ avb_id }}"
+    auto_ip: false
+    # delete_fip: true
+    userdata: |
+      #cloud-config
+      password: changeme
+      passwd: '$6$rounds=4096$PAOuUeVese4oqpm/$GD0AQGmYfvm6a4tpurTldQN3HwwnQdYxCwLPtYotKax/qv5GKO00WodygAeXwM2qO21Y48pxZkmM6e5xjzqzr.'
+      chpasswd: { expire: False }
+      ssh_pwauth: False
+      lock_passwd: False
+      output: { all: '| tee -a /var/log/cloud-init-output.log' }
+      ssh_authorized_keys:
+      {% for key in keypairs %}
+        - {{ key.public_key }}
+      {% endfor %}
+      users:
+        - default
+        - name: zuul
+          ssh_authorized_keys:
+          {% for key in keypairs %}
+            - {{ key.public_key }}
+          {% endfor %}
+      runcmd:
+        - dnf remove -y cloud-init
+        - dnf update -y
+        - reboot
+  register: undercloud
+  when: set_up_undercloud|bool
+
+- include_tasks: prepare_bmc.yml
+  when: not teardown|bool

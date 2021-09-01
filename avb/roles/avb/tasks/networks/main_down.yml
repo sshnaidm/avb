@@ -1,0 +1,12 @@
+---
+- include_tasks: routers.yml
+  vars:
+    state: "{{ 'absent' if teardown|bool else 'present' }}"
+
+- include_tasks: subnets.yml
+  vars:
+    state: "{{ 'absent' if teardown|bool else 'present' }}"
+
+- include_tasks: networks.yml
+  vars:
+    state: "{{ 'absent' if teardown|bool else 'present' }}"

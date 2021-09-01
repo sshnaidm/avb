@@ -1,0 +1,16 @@
+---
+- openstack.cloud.image:
+    owner: '{{ item.owner | default(omit) }}'
+    min_ram: '{{ item.min_ram | default(omit) }}'
+    cloud: "{{ cloud }}"
+    checksum: '{{ item.checksum | default(omit) }}'
+    disk_format: '{{ item.disk_format | default(omit) }}'
+    is_public: '{{ item.is_public | default(omit) }}'
+    min_disk: '{{ item.min_disk | default(omit) }}'
+    state: present
+    filename: '{{ item.filename | default(omit) }}'
+    properties: '{{ item.properties | default(omit) }}'
+    name: '{{ item.name | default(omit) }}'
+  loop: '{{ images }}'
+  when:
+    - base_setup|bool

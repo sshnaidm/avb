@@ -1,0 +1,12 @@
+---
+- include_tasks: flavors.yml
+  vars:
+    state: "{{ 'absent' if teardown|bool else 'present' }}"
+
+- include_tasks: keypairs.yml
+  vars:
+    state: "{{ 'absent' if teardown|bool else 'present' }}"
+
+- include_tasks: servers.yml
+  vars:
+    state: "{{ 'absent' if teardown|bool else 'present' }}"
