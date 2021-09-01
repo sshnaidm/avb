@@ -5,6 +5,7 @@
     state: "{{ state }}"
     network: "private-{{ avb_id }}"
     port_security_enabled: false
+    no_security_groups: true
 
 - openstack.cloud.server:  # bmc
     state: "{{ state }}"
@@ -16,6 +17,7 @@
     nics:
       - port-name: "utility_{{ bmc_prefix}}"
     auto_ip: false
+    security_groups: []
   register: bmc
 
 - openstack.cloud.port:
