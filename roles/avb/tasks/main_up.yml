@@ -1,5 +1,5 @@
 - include_vars: vars/main.yml
 
 - import_tasks: networks/main.yml
-#- import_tasks: storage/images.yml
+- import_tasks: storage/images.yml
 - import_tasks: compute/main.yml

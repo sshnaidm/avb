@@ -11,9 +11,10 @@
     state: "{{ state }}"
     name: "{{ bmc_prefix }}"
     cloud: "{{ cloud }}"
-    flavor: m1.medium
+    flavor: "{{ bmc_flavor }}"
     key_name: "{{ key_name }}"
-    image: bmc-template
+    image: "{{ bmc_image }}"
+    config_drive: true
     nics:
       - port-name: "utility_{{ bmc_prefix}}"
     auto_ip: false
@@ -25,6 +26,8 @@
     name: "{{ baremetal_prefix }}_{{ item }}"
     state: "{{ state }}"
     network: "ctlplane-{{ avb_id }}"
+    port_security_enabled: false
+    no_security_groups: true
   loop: "{{ range(0, bms_count) }}"
 
 - openstack.cloud.port:
@@ -40,10 +43,11 @@
     cloud: "{{ cloud }}"
     flavor: "{{ bm_flavor }}"
     key_name: "{{ key_name }}"
-    meta:
-      libvirt:pxe-first: '1'
-    image: ipxe-boot
-    config_drive: true
+    #meta:
+    #  libvirt:pxe-first: '1'
+    image: "{{ baremetal_image }}"
+    #config_drive: true
+    security_groups: []
     nics:
       - port-name: "{{ baremetal_prefix }}_{{ item }}"
       - net-name: "public-{{ avb_id }}"
@@ -99,3 +103,16 @@
 
 - include_tasks: prepare_bmc.yml
   when: not teardown|bool
+
+- name: Create nodes JSON file
+  shell: >-
+    OS_CLOUD="{{ cloud }}"
+    python3 build-nodes-json
+    --network_details
+    --nodes_json nodes-{{ avb_id }}.json
+    --physical_network
+    --id {{ avb_id }}
+    --bmc_prefix bmc-{{ avb_id }}
+    --baremetal_prefix baremetal-{{ avb_id }}
+  delegate_to: localhost
+  changed_when: false
