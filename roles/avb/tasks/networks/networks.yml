@@ -5,6 +5,7 @@
       state: "{{ state }}"
       cloud: "{{ cloud }}"
       name: "{{ private_network }}"
+      port_security_enabled: false
     when: use_private_net|bool
 
   - openstack.cloud.network:
@@ -19,4 +20,5 @@
     cloud: "{{ cloud }}"
     name: "{{ item.network_name }}"
     external: '{{ item.external | default(omit) }}'
+    port_security_enabled: '{{ item.port_security_enabled | default(omit) }}'
   loop: '{{ networks }}'

@@ -2,12 +2,19 @@
 # networks section
 networks:
 - network_name: "ctlplane-{{ avb_id }}"
+  port_security_enabled: false
 - network_name: "public-{{ avb_id }}"
+  port_security_enabled: false
 - network_name: "private-{{ avb_id }}"
+  port_security_enabled: false
 - network_name: "overcloud_storage-{{ avb_id }}"
+  port_security_enabled: false
 - network_name: "overcloud_storage_mgmt-{{ avb_id }}"
+  port_security_enabled: false
 - network_name: "overcloud_tenant-{{ avb_id }}"
+  port_security_enabled: false
 - network_name: "overcloud_internal-{{ avb_id }}"
+  port_security_enabled: false
 # subnets section
 subnets:
   - name: "overcloud_storage_mgmt-{{ avb_id }}"

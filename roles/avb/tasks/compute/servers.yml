@@ -43,10 +43,7 @@
     cloud: "{{ cloud }}"
     flavor: "{{ bm_flavor }}"
     key_name: "{{ key_name }}"
-    #meta:
-    #  libvirt:pxe-first: '1'
     image: "{{ baremetal_image }}"
-    #config_drive: true
     security_groups: []
     nics:
       - port-name: "{{ baremetal_prefix }}_{{ item }}"
@@ -69,12 +66,10 @@
     image: "{{ undercloud_image }}"
     nics:
       - net-name: "{{ external_net }}"
-      # - net-name: private
       - net-name: "ctlplane-{{ avb_id }}"
       - net-name: "public-{{ avb_id }}"
       - net-name: "private-{{ avb_id }}"
     auto_ip: false
-    # delete_fip: true
     userdata: |
       #cloud-config
       password: changeme

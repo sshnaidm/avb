@@ -4,12 +4,14 @@
     clouds:
       - "{{ cloud }}"
   register: cloud_config
+  no_log: true
 
 - name: Set fact for cloud config
   set_fact:
     cloud_data:
       clouds:
         host_cloud: "{{ cloud_config.ansible_facts.openstack.clouds.0.auth }}"
+  no_log: true
 
 - name: Add bmc host with connection via undercloud
   add_host:
@@ -30,6 +32,17 @@
     ansible_user: centos
   when: not set_up_undercloud|bool
 
+- name: Wait for undercloud to be up
+  when: set_up_undercloud|bool
+  wait_for:
+    port: 22
+    host: "{{ undercloud.server.public_v4 }}"
+    delay: 10
+
+- name: Sleep for 15 seconds
+  wait_for:
+    timeout: 15
+
 - delegate_to: bmc
   become: true
   block:
@@ -45,6 +58,7 @@
         dest: ~/.config/openstack/clouds.yaml
         content: >-
           {{ cloud_data|to_yaml }}
+      no_log: true
 
     - name: Create /usr/local/bin/openstackbmc
       copy:
